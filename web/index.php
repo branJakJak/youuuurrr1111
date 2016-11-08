@@ -1,0 +1,16 @@
+<?php
+
+// comment out the following two lines when deployed to production
+defined('YII_DEBUG') or define('YII_DEBUG', true);
+defined('YII_ENV') or define('YII_ENV', 'dev');
+
+require(__DIR__ . '/../ur1.click/vendor/autoload.php');
+require(__DIR__ . '/../ur1.click/vendor/yiisoft/yii2/Yii.php');
+
+$envDirPath = dirname(__FILE__).'/..';
+$dotenv = new Dotenv\Dotenv($envDirPath);
+$dotenv->load();
+
+$config = require(__DIR__ . '/../ur1.click/config/web.php');
+
+(new yii\web\Application($config))->run();

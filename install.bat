@@ -1,0 +1,1 @@
+php yii migrate 99 --migrationPath=@vendor/dektrium/yii2-user/migrations --interactive=0
