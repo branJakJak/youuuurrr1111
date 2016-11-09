@@ -41,7 +41,7 @@ $this->title =  Yii::$app->name;
                         <strong>Follow the order : </strong>
                         <br>
                         <br>
-                        Firstname , Lastname , Telephone , Mobilenumber , FlatNumber , Address , Address1 , Address2 , Address3 , Address4 , Address5 , Postcode , EmailAddress , DateOfBirth,Bank Name , Monthly Fee,Time With Bank
+                        Title , Firstname , Lastname , Telephone , Mobilenumber , FlatNumber , Address , Address1 , Address2 , Address3 , Address4 , Address5 , Postcode , EmailAddress , DateOfBirth,Bank Name , Monthly Fee,Time With Bank
                     </li>
                 </ul>
                  
