@@ -44,6 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'postcode',
             'emailAddress:email',
             'dateOfBirth',
+            'reference_id',
             'bankName',
             'monthylFee',
             'timeWithBank',

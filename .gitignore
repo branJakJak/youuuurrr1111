@@ -1,3 +1,8 @@
+data/
+
+# phpstorm project files
+.phpintel
+
 # phpstorm project files
 .idea
 

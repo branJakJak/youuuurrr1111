@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\ClickLog;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -109,6 +110,12 @@ class SiteController extends Controller
             unset($tempContainer['reference_id']);
             unset($tempContainer['created_at']);
             unset($tempContainer['updated_at']);
+            $logReq = new ClickLog();
+            $logReq->ip_address = Yii::$app->request->getUserIP();
+            $logReq->user_agent = Yii::$app->request->getUserAgent();
+            $logReq->raw_access = json_encode($_SERVER);
+            $logReq->person_id = $foundModel->id;
+            $logReq->save(false);
             $target_redirect_url .= "?".http_build_query($tempContainer);
         }
         return $this->redirect($target_redirect_url);
