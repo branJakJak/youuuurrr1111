@@ -36,6 +36,7 @@ class ClickLog extends \yii\db\ActiveRecord
         $query = new Query();
         $query->select('count(click_log.id) as num_recs')
             ->from(ClickLog::tableName())
+            ->groupBy("click_log.person_id")
             ->innerJoin('person_info', 'person_info.id = click_log.person_id');
         return $query;
     }
@@ -44,6 +45,7 @@ class ClickLog extends \yii\db\ActiveRecord
         $query = new Query();
         $query->select('person_info.mobilenumber as mobilenumber')
             ->from(ClickLog::tableName())
+            ->groupBy("click_log.person_id")
             ->innerJoin('person_info', 'person_info.id = click_log.person_id');
         return $query;
     }

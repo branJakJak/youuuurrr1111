@@ -4,10 +4,27 @@ namespace app\controllers;
 
 use app\models\ClickLog;
 use app\components\QueryRestulToCsv;
+use yii\filters\AccessControl;
 
 
 class ClicksController extends \yii\web\Controller
 {
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['export','index'],
+                'rules' => [
+                    [
+                        'actions' => ['export','index'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }    
     public function actionIndex()
     {
         $day = ClickLog::getTodaysCount();
