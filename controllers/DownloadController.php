@@ -33,7 +33,9 @@ class DownloadController extends Controller
     }
     public function actionIndex($batchId)
     {
-    	$batchObj = Batch::find()->where(['id'=>$batchId])->one();
+    	$batchObj = Batch::find()
+            ->orderBy("id DESC")
+    		->one();
     	if ($batchObj) {
     		/*download mobile with the links*/
     		$baseUrl = Url::home(true);

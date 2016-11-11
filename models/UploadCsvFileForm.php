@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\base\Exception;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
@@ -41,9 +42,9 @@ class UploadCsvFileForm extends Model
     public function import()
     {
         $returnMessage = [
-            'status'=>'error',
-            'message'=>[
-                'imported_data'=>0
+            'status' => 'error',
+            'message' => [
+                'imported_data' => 0
             ]
         ];
         $outputFile = tempnam(sys_get_temp_dir(), "tmp_");
@@ -53,20 +54,20 @@ class UploadCsvFileForm extends Model
         $this->batchObj = new Batch();
         $this->batchObj->batch_name = $this->original_file_name;
         if (!$this->batchObj->save()) {
-            throw new Exception("Cant add new batch record . Reason : ".Html::errorSummary($this->batchObj));
+            throw new Exception("Cant add new batch record . Reason : " . Html::errorSummary($this->batchObj));
         }
 
         while (!feof($datasourceFileRes)) {
             $curCsvLine = fgetcsv($datasourceFileRes);
             if (!empty($curCsvLine)) {
                 $curData = ArrayHelper::merge([
-                    date('Y-m-d H:i:s',time()),
-                    uniqid(),
+                    date('Y-m-d H:i:s', time()),
+                    substr(uniqid(), -4),
                     $this->batchObj->id,
                 ], $curCsvLine);
                 fputcsv($outPutFileRes, $curData);
             }
-            }
+        }
         fclose($outPutFileRes);
         fclose($datasourceFileRes);
         $sqlCommand = <<<EOL
@@ -88,17 +89,18 @@ EOL;
         $outputStr = `wc -l $outputFile`;
         $outputArr = explode(" ", $outputStr);
         $returnMessage = [
-            'status'=>'success',
-            'message'=>[
-                'imported_data'=>$outputArr[0],
-                'file_name'=>$this->original_file_name
+            'status' => 'success',
+            'message' => [
+                'imported_data' => $outputArr[0],
+                'file_name' => $this->original_file_name
             ]
         ];
         $retMess = shell_exec($mainCommand);
         return $returnMessage;
     }
+
     public function getDownloadLink()
     {
-        return Html::a('<span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download', ['/download/'.$this->batchObj->id], ['_target'=>'blank','class' => 'btn btn-block btn-primary']);
+        return Html::a('<span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download', ['/download/' . $this->batchObj->id], ['_target' => 'blank', 'class' => 'btn btn-block btn-primary']);
     }
 }
