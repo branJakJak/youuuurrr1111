@@ -4,7 +4,11 @@ namespace app\controllers;
 
 use app\models\ClickLog;
 use app\components\QueryRestulToCsv;
+use yii\data\ArrayDataProvider;
+use yii\db\Query;
 use yii\filters\AccessControl;
+use app\models\SearchClickForm;
+use Yii;
 
 
 class ClicksController extends \yii\web\Controller
@@ -30,7 +34,21 @@ class ClicksController extends \yii\web\Controller
         $day = ClickLog::getTodaysCount();
     	$week = ClickLog::getThisWeeksLog();
     	$month = ClickLog::getThisMonthLog();
-        return $this->render('index',compact('day','week','month'));
+        $searchForm = new SearchClickForm();
+        $clickLogDataProvider = new ArrayDataProvider();
+        if ($searchForm->load(Yii::$app->request->post())) {
+            $clickLogRawData= $searchForm->search();
+            $clickLogDataProvider->allModels = $clickLogRawData;
+        } else {
+            $clickLogRawData = (new Query())
+                ->select(['reference_id','mobilenumber','telephone'])
+                ->from("person_info")
+                ->innerJoin("click_log",'click_log.person_id = person_info.id')
+                ->all();
+            $clickLogDataProvider->allModels = $clickLogRawData;
+        }
+        $clickLogDataProvider->pagination->pageSize = 15;
+        return $this->render('index',compact('day','week','month','searchForm','clickLogDataProvider'));
     }
     public function actionExport($report)
     {
