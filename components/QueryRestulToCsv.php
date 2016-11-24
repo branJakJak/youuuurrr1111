@@ -26,11 +26,15 @@ class QueryRestulToCsv extends Component{
         $this->path_to_file_output = \Yii::getAlias("@app/data") . DIRECTORY_SEPARATOR . $this->file_name.'.csv';
         $fileRes = fopen($this->path_to_file_output, 'w+');
         //write header
-        fputcsv($fileRes, array_keys($this->raw_result[0]));
-        foreach ($this->raw_result as $currentLine) {
-            fputcsv($fileRes, array_values($currentLine));
+        if (isset($this->raw_result[0])) {
+            fputcsv($fileRes, array_keys($this->raw_result[0]));
+            foreach ($this->raw_result as $currentLine) {
+                fputcsv($fileRes, array_values($currentLine));
+            }
+            fclose($fileRes);
+        }else{
+            
         }
-        fclose($fileRes);
         return $this->path_to_file_output;
     }
 } 
