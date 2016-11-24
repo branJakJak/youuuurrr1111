@@ -42,7 +42,7 @@ class ClickLog extends \yii\db\ActiveRecord
     public static function getExportQuery()
     {
         $query = new Query();
-        $query->select('person_info.mobilenumber as mobilenumber')
+        $query->select('person_info.mobilenumber as mobilenumber,person_info.telephone as telephone')
             ->from(ClickLog::tableName())
             ->innerJoin('person_info', 'person_info.id = click_log.person_id');
         return $query;
