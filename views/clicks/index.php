@@ -28,7 +28,7 @@ use yii\helpers\Html;
 					    	'columns' => [
 					    		'mobilenumber',
 					    		'reference_id',
-//					    		'telephone'
+					    		'telephone'
 					    	]
 					    ]);?>
 					</div>
