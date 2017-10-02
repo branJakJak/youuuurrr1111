@@ -118,6 +118,7 @@ class SiteController extends Controller
             $logReq->save(false);
             $target_redirect_url .= "?".http_build_query($tempContainer);
         }
-        return $this->redirect($target_redirect_url);
+        die;
+        // return $this->redirect($target_redirect_url);
     }
 }
