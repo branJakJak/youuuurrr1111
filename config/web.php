@@ -52,7 +52,8 @@ $config = [
     'modules' => [
         'user' => [
             'class' => 'dektrium\user\Module',
-            'enableConfirmation'=>false,
+            'enableConfirmation'=>true,
+            'enableRegistration'=>false,
             'admins'=>['admin'],
         ],
     ],

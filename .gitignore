@@ -9,6 +9,11 @@ data/
 # netbeans project files
 nbproject
 
+
+temp
+
+
+
 # zend studio for eclipse project files
 .buildpath
 .project
