@@ -83,7 +83,7 @@ EOL;
         $databaseName = end($tempContainerArr);
         $databaseUsername = Yii::$app->db->username;
         $databasePassword = Yii::$app->db->password;
-        $sqlCommand = sprintf($sqlCommand, $outputFile, ',', '\n');
+        $sqlCommand = sprintf($sqlCommand, $outputFile, ',', '\r\n');
         $sqlCommand .= 'set created_at = STR_TO_DATE(@var1,"%Y-%m-%d %h:%i:%s");';
         $mainCommand = "mysql --local-infile --user=$databaseUsername --password=$databasePassword --database=$databaseName -e '$sqlCommand'";
         $outputStr = `wc -l $outputFile`;
