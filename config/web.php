@@ -3,7 +3,8 @@
 $params = require(__DIR__ . '/params.php');
 
 $config = [
-    'id' => 'basic',
+    'id' => 'support8.online',
+    'name' => 'support8.online',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'components' => [
@@ -54,6 +55,7 @@ $config = [
             'class' => 'dektrium\user\Module',
             'enableConfirmation'=>true,
             'enableRegistration'=>false,
+            'enablePasswordRecovery'=>false,
             'admins'=>['admin','admin_support8'],
         ],
     ],
