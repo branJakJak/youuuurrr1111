@@ -11,4 +11,5 @@ use yii\helpers\Html;
 	<i style="padding-left: 10px">
 		<?= Yii::$app->formatter->asDateTime($model->created_at) ?> 
 	</i>
+	<a href="/batch/delete/<?php echo $model->id ?>" class="btn btn-link pull-right">delete</a>
 </div>
