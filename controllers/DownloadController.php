@@ -38,7 +38,7 @@ class DownloadController extends Controller
     		->one();
     	if ($batchObj) {
     		/*download mobile with the links*/
-    		$baseUrl = Url::home(true);
+    		$baseUrl = getenv('BASE_OUTPUT_URL');
     		$sqlCommand = <<<EOL
     		select mobilenumber , concat("$baseUrl",reference_id) as link
     		from person_info where batch_id = :batch_id
