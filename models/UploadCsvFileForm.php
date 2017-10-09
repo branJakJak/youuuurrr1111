@@ -13,8 +13,8 @@ use yii\helpers\Html;
 /**
  * UploadCsvFileForm
  */
-class UploadCsvFileForm extends Model
-{
+class UploadCsvFileForm extends Model {
+
     // Path of the csv file in the temp directory
     public $csvFile;
     public $original_file_name;
@@ -23,8 +23,7 @@ class UploadCsvFileForm extends Model
     /**
      * @return array the validation rules.
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             // username and password are both required
             [['csvFile'], 'required'],
@@ -32,15 +31,13 @@ class UploadCsvFileForm extends Model
         ];
     }
 
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'csvFile' => 'CSV File',
         ];
     }
 
-    public function import()
-    {
+    public function import() {
         $returnMessage = [
             'status' => 'error',
             'message' => [
@@ -61,10 +58,10 @@ class UploadCsvFileForm extends Model
             $curCsvLine = fgetcsv($datasourceFileRes);
             if (!empty($curCsvLine)) {
                 $curData = ArrayHelper::merge([
-                    date('Y-m-d H:i:s', time()),
-                    substr(uniqid(), -4),
-                    $this->batchObj->id,
-                ], $curCsvLine);
+                            date('Y-m-d H:i:s', time()),
+                            substr( uniqid(), (Yii::$app->params['NUMBER_OF_RANDOM_CHARACTER'] ) * -1 ),
+                            $this->batchObj->id,
+                                ], $curCsvLine);
                 fputcsv($outPutFileRes, $curData);
             }
         }
@@ -83,7 +80,7 @@ EOL;
         $databaseName = end($tempContainerArr);
         $databaseUsername = Yii::$app->db->username;
         $databasePassword = Yii::$app->db->password;
-        $sqlCommand = sprintf($sqlCommand, $outputFile, ',', '\r\n');
+        $sqlCommand = sprintf($sqlCommand, $outputFile, ',', '\n');
         $sqlCommand .= 'set created_at = STR_TO_DATE(@var1,"%Y-%m-%d %h:%i:%s");';
         $mainCommand = "mysql --local-infile --user=$databaseUsername --password=$databasePassword --database=$databaseName -e '$sqlCommand'";
         $outputStr = `wc -l $outputFile`;
@@ -99,8 +96,8 @@ EOL;
         return $returnMessage;
     }
 
-    public function getDownloadLink()
-    {
+    public function getDownloadLink() {
         return Html::a('<span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download', ['/download/' . $this->batchObj->id], ['_target' => 'blank', 'class' => 'btn btn-block btn-primary']);
     }
+
 }
