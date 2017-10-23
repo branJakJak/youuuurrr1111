@@ -5,12 +5,16 @@ namespace app\controllers;
 use app\models\ClickLog;
 use Yii;
 use yii\filters\AccessControl;
+use yii\helpers\Json;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\Batch;
 use app\models\PersonInformation;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
+use yii\web\UnprocessableEntityHttpException;
 use yii\web\UploadedFile;
 use yii\data\ActiveDataProvider;
 
@@ -21,10 +25,10 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout','index'],
+                'only' => ['logout', 'index'],
                 'rules' => [
                     [
-                        'actions' => ['logout','index'],
+                        'actions' => ['logout', 'index'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -56,10 +60,10 @@ class SiteController extends Controller
     {
         $model = new \app\models\UploadCsvFileForm();
         $batchDataProvider = new ActiveDataProvider([
-            'query'=>Batch::find()->orderBy("created_at DESC")
+            'query' => Batch::find()->orderBy("created_at DESC")
         ]);
-        if ($model->load(Yii::$app->request->post()) ) {
-            $uploadedFile = UploadedFile::getInstance($model,'csvFile');
+        if ($model->load(Yii::$app->request->post())) {
+            $uploadedFile = UploadedFile::getInstance($model, 'csvFile');
             $model->csvFile = $uploadedFile->tempName;
             $model->original_file_name = $uploadedFile->name;
             if ($model->validate()) {
@@ -73,7 +77,7 @@ class SiteController extends Controller
                 return $this->redirect('/site/index');
             }
         }
-        return $this->render('index',compact('model','batchDataProvider'));
+        return $this->render('index', compact('model', 'batchDataProvider'));
     }
 
     public function actionLogin()
@@ -100,8 +104,9 @@ class SiteController extends Controller
 
     public function actionRedirect($reference_id)
     {
+        Yii::$app->response->format = Response::FORMAT_JSON;
         $target_redirect_url = getenv('TARGET_URL');
-        $foundModel = PersonInformation::find()->where(['reference_id'=>$reference_id])->one();
+        $foundModel = PersonInformation::find()->where(['reference_id' => $reference_id])->one();
         /*check if exists*/
         if ($foundModel) {
             $tempContainer = $foundModel->attributes;
@@ -110,15 +115,25 @@ class SiteController extends Controller
             unset($tempContainer['reference_id']);
             unset($tempContainer['created_at']);
             unset($tempContainer['updated_at']);
-            $logReq = new ClickLog();
-            $logReq->ip_address = Yii::$app->request->getUserIP();
-            $logReq->user_agent = Yii::$app->request->getUserAgent();
-            $logReq->raw_access = json_encode($_SERVER);
-            $logReq->person_id = $foundModel->id;
-            $logReq->save(false);
-            $target_redirect_url .= "?".http_build_query($tempContainer);
+            /*check if clicked before*/
+            if (ClickLog::find()->where(['person_id' => $foundModel->id])->exists()) {
+                throw new UnprocessableEntityHttpException("This lead has been clicked");
+            } else {
+                $logReq = new ClickLog();
+                $logReq->ip_address = Yii::$app->request->getUserIP();
+                $logReq->user_agent = Yii::$app->request->getUserAgent();
+                $logReq->raw_access = json_encode($_SERVER);
+                $logReq->person_id = $foundModel->id;
+                $logReq->save(false);
+                $target_redirect_url .= "?" . http_build_query($tempContainer);
+                return [
+                    'final_url' => $target_redirect_url,
+                    'base_url' => getenv('TARGET_URL'),
+                    'data' => $tempContainer    ,
+                ];
+            }
+        } else {
+            throw new NotFoundHttpException();
         }
-        die;
-        // return $this->redirect($target_redirect_url);
     }
 }
