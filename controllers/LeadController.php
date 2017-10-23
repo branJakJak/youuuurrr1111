@@ -26,11 +26,13 @@ class LeadController extends Controller
         if (!$personInformation) {
             throw new NotFoundHttpException();
         }
+        $isClicked = ClickLog::find()->where(['person_id' => $personInformation->id])->exists();
         return [
             'data' => [
-                'firstname'=>$personInformation->firstname,
-                'lastname'=>$personInformation->lastname,
-                'mobile'=>$personInformation->mobilenumber
+                'firstname' => $personInformation->firstname,
+                'lastname' => $personInformation->lastname,
+                'mobile' => $personInformation->mobilenumber,
+                'isClicked' => $isClicked,
             ]
         ];
     }
@@ -39,7 +41,7 @@ class LeadController extends Controller
     {
         \Yii::$app->response->format = Response::FORMAT_JSON;
         $personInformation = PersonInformation::find()->where(['reference_id' => $referenceId])->one();
-        if($personInformation){
+        if ($personInformation) {
             if (!ClickLog::find()->where(['person_id' => $personInformation->id])->exists()) {
                 throw new NotFoundHttpException();
             }
